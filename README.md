@@ -1,2 +1,3 @@
 # img-gen
-Just a simple wallpaper generator
+My desktop wallpaper generation program
+![](https://github.com/zkud/img-gen/blob/main/wallpaper.jpeg)
