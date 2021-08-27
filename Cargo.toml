@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 
 jpeg-encoder = "0.3.0"
+fallible_alloc = "0.2.0"

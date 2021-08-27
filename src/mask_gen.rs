@@ -7,6 +7,7 @@ use super::FIGURE_MIN_HEIGHT;
 use super::FIGURE_MIN_WIDTH;
 use super::FIGURE_ROTATION_COUNT;
 
+#[derive(Clone)]
 struct Pixel {
   row: usize,
   column: usize,
@@ -88,10 +89,10 @@ pub fn draw_mask(image: &mut [u8]) {
 
   draw_figure(
     image,
-    &left_up_base_point,
-    &right_up_base_point,
-    &left_down_base_point,
-    &right_down_base_point,
+    left_up_base_point.clone(),
+    right_up_base_point.clone(),
+    left_down_base_point.clone(),
+    right_down_base_point.clone(),
   );
 
   for _ in 0..FIGURE_ROTATION_COUNT {
@@ -102,31 +103,28 @@ pub fn draw_mask(image: &mut [u8]) {
 
     draw_figure(
       image,
-      &left_up_base_point,
-      &right_up_base_point,
-      &left_down_base_point,
-      &right_down_base_point,
+      left_up_base_point.clone(),
+      right_up_base_point.clone(),
+      left_down_base_point.clone(),
+      right_down_base_point.clone(),
     );
   }
 }
 
-fn draw_figure(image: &mut [u8], lu_bp: &Pixel, ru_bp: &Pixel, ld_bp: &Pixel, rd_bp: &Pixel) {
-  if lu_bp.find_distance(ru_bp) < 10.0 {
-    return;
-  } else {
-    draw_box(image, lu_bp, ru_bp, ld_bp, rd_bp);
+fn draw_figure(image: &mut [u8], mut lu_bp: Pixel, mut ru_bp: Pixel, mut ld_bp: Pixel, mut rd_bp: Pixel) {
+  while lu_bp.find_distance(&ru_bp) > 10.0 {
+    draw_box(image, &lu_bp, &ru_bp, &ld_bp, &rd_bp);
 
-    let mean_lu_ld = lu_bp.find_mean(ld_bp);
-    let mean_lu_ru = lu_bp.find_mean(ru_bp);
-    let mean_ru_rd = ru_bp.find_mean(rd_bp);
-    let mean_ld_rd = ld_bp.find_mean(rd_bp);
+    let mean_lu_ld = lu_bp.find_mean(&ld_bp);
+    let mean_lu_ru = lu_bp.find_mean(&ru_bp);
+    let mean_ru_rd = ru_bp.find_mean(&rd_bp);
+    let mean_ld_rd = ld_bp.find_mean(&rd_bp);
     draw_box(image, &mean_lu_ld, &mean_lu_ru, &mean_ld_rd, &mean_ru_rd);
 
-    let new_lu_bp = mean_lu_ld.find_mean(&mean_lu_ru);
-    let new_ru_bp = mean_lu_ru.find_mean(&mean_ru_rd);
-    let new_ld_bp = mean_lu_ld.find_mean(&mean_ld_rd);
-    let new_rd_bp = mean_ld_rd.find_mean(&mean_ru_rd);
-    draw_figure(image, &new_lu_bp, &new_ru_bp, &new_ld_bp, &new_rd_bp);
+    lu_bp = mean_lu_ld.find_mean(&mean_lu_ru);
+    ru_bp = mean_lu_ru.find_mean(&mean_ru_rd);
+    ld_bp = mean_lu_ld.find_mean(&mean_ld_rd);
+    rd_bp = mean_ld_rd.find_mean(&mean_ru_rd);
   }
 }
 

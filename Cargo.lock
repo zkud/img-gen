@@ -3,9 +3,16 @@
 version = 3
 
 [[package]]
+name = "fallible_alloc"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0d496d8e500fcf48609dfbe6d278d55ce2a74ebaf8113527f20867309a5d54f"
+
+[[package]]
 name = "img-gen"
 version = "0.1.0"
 dependencies = [
+ "fallible_alloc",
  "jpeg-encoder",
 ]
 
